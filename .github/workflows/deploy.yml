@@ -24,37 +24,15 @@ jobs:
       - name: Install unikraft CLI from GitHub releases
         run: |
           set -e
-          # Download latest unikraft CLI from GitHub releases
           CLI_VERSION="0.4.2"
           CLI_URL="https://github.com/unikraft-cloud/cli/releases/download/v${CLI_VERSION}/unikraft-cli_${CLI_VERSION}_linux_amd64.tar.gz"
-          
-          echo "Downloading from: $CLI_URL"
           curl -fsSL "$CLI_URL" -o /tmp/unikraft-cli.tar.gz
-          
-          # Extract and install
           mkdir -p "$HOME/.local/bin"
           tar -xzf /tmp/unikraft-cli.tar.gz -C /tmp/
-          
-          # Find the binary
-          BINARY=$(find /tmp -name 'unikraft-cli*' -type f -executable 2>/dev/null | head -1)
-          if [ -z "$BINARY" ]; then
-            BINARY=$(find /tmp -name 'unikraft' -type f -executable 2>/dev/null | head -1)
-          fi
-          echo "Found binary: $BINARY"
-          
-          if [ -z "$BINARY" ]; then
-            echo "Extracted contents:"
-            find /tmp -name 'unikraft*' 2>/dev/null
-            tar -tzf /tmp/unikraft-cli.tar.gz
-            exit 1
-          fi
-          
-          mv "$BINARY" "$HOME/.local/bin/unikraft"
+          mv /tmp/unikraft "$HOME/.local/bin/unikraft"
           chmod +x "$HOME/.local/bin/unikraft"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          
-          # Verify
-          unikraft --version
+          unikraft --help | head -5
 
       - name: Login to Unikraft Cloud
         run: unikraft login --token "$UKC_TOKEN"
