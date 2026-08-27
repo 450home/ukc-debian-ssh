@@ -35,7 +35,8 @@ jobs:
           unikraft --help | head -5
 
       - name: Login to Unikraft Cloud
-        run: unikraft login --token "$UKC_TOKEN"
+        run: |
+          echo -n "$UKC_TOKEN" | unikraft login --token -
 
       - name: Build and push image
         run: |
