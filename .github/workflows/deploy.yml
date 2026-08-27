@@ -32,17 +32,15 @@ jobs:
           mv /tmp/unikraft "$HOME/.local/bin/unikraft"
           chmod +x "$HOME/.local/bin/unikraft"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          unikraft --help | head -5
+          unikraft --help | head -3
 
       - name: Login to Unikraft Cloud
-        run: |
-          echo -n "$UKC_TOKEN" | unikraft login --token -
+        run: echo -n "$UKC_TOKEN" | unikraft login --token -
 
       - name: Build and push image
         run: |
           unikraft build . \
-            --output "$UKC_ORG/$APP_NAME:latest" \
-            --push
+            --output "$UKC_ORG/$APP_NAME:latest"
 
       - name: Deploy SSH instance
         run: |
