@@ -1,0 +1,45 @@
+name: Build and Deploy to Unikraft Cloud
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      UKC_METRO: sin
+      UKC_ORG: ${{ secrets.UKC_ORG }}
+      UKC_TOKEN: ${{ secrets.UKC_TOKEN }}
+      APP_NAME: debian-ssh
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install unikraft CLI
+        run: |
+          curl -fsSL https://get.unikraft.cloud | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Login to Unikraft Cloud
+        run: unikraft login --token "$UKC_TOKEN"
+
+      - name: Build and push image
+        run: |
+          unikraft build . \
+            --output "$UKC_ORG/$APP_NAME:latest" \
+            --push
+
+      - name: Deploy SSH instance
+        run: |
+          unikraft run --metro "$UKC_METRO" \
+            -m 1G \
+            -p 2222:2222/tls \
+            --scale-to-zero policy=off \
+            --image "$UKC_ORG/$APP_NAME:latest" \
+            --autostart
