@@ -22,7 +22,7 @@ RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd /etc/ssh
 
 # 预生成 sshd host key (避免依赖平台注入)
-RUN mkdir -p /etc/ssh && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N "" -q && ls -la /etc/ssh/ssh_host_ecdsa_key
+RUN rm -f /etc/ssh/ssh_host_ecdsa_key && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N "" -q && ls -la /etc/ssh/ssh_host_ecdsa_key
 
 COPY ./sshd_config /etc/ssh/sshd_config
 
