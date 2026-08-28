@@ -22,6 +22,5 @@ tigervncserver "$DISPLAY" \
 
 sleep 2
 
-# websockify: VNC(5901) -> 网页 noVNC(6080)
-exec websockify --web /opt/novnc \
-    0.0.0.0:6080 localhost:5901
+# 纯标准库 WebSocket 代理: VNC(5901) -> 网页(6080)
+exec python3 /usr/bin/pyws.py --web /opt/novnc 0.0.0.0:6080 localhost:5901
