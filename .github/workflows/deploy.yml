@@ -12,7 +12,7 @@ jobs:
       UKC_METRO: sin
       UKC_ORG: ${{ secrets.UKC_ORG }}
       UKC_TOKEN: ${{ secrets.UKC_TOKEN }}
-      APP_NAME: debian-ssh
+      APP_NAME: debian-vnc
 
     steps:
       - name: Checkout
