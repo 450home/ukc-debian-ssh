@@ -17,7 +17,7 @@ tigervncserver "$DISPLAY" \
     -localhost \
     -SecurityTypes VncAuth \
     -passwd "$HOME/.vnc/passwd" \
-    -xstartup /usr/bin/openbox-session \
+    -xstartup /usr/bin/twm \
     >/var/log/vnc.log 2>&1 &
 
 sleep 2

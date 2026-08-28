@@ -10,11 +10,11 @@ RUN set -xe; \
         python3 \
     ;
 
-# 轻量桌面: openbox + tigervnc (纯标准库 websockify, 不装 websockify/novnc apt 包)
+# 轻量桌面: twm(极小窗口管理器, X11自带) + tigervnc
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends \
         tigervnc-standalone-server \
-        openbox xterm \
+        twm xterm \
     ; \
     if [ -f /var/lib/dpkg/info/ieee-data.postinst ]; then \
         printf '#!/bin/sh\nexit 0\n' > /var/lib/dpkg/info/ieee-data.postinst; \
