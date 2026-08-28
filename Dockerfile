@@ -9,10 +9,11 @@ RUN set -xe; \
         openssh-server strace net-tools ca-certificates \
     ;
 
-# 网页终端 webssh (纯 python, pip 安装, 零二进制依赖, 兼容 glibc)
+# 网页终端 webssh (纯 python, pip 安装)
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends python3-pip; \
-    pip3 install --no-cache-dir webssh 2>&1 | tail -2 || pip3 install --break-system-packages --no-cache-dir webssh; \
+    pip3 install --no-cache-dir webssh==1.6.2 2>&1 | tail -3 || pip3 install --break-system-packages --no-cache-dir webssh==1.6.2; \
+    which wssh && echo "WSSH_OK" || echo "WSSH_MISSING"; \
     apt-get -yqq purge -y python3-pip 2>/dev/null || true; \
     apt-get -yqq autoremove --purge -y 2>/dev/null || true
 
