@@ -21,6 +21,9 @@ RUN set -xe; \
 RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd
 
+# 预生成 sshd host key (避免依赖平台注入, 否则新实例 sshd 前台启动会失败)
+RUN ssh-keygen -A && ls -la /etc/ssh/ | grep host_key
+
 COPY ./sshd_config /etc/ssh/sshd_config
 
 # ttyd 启动脚本 (网页终端, 密码 unikraft)
