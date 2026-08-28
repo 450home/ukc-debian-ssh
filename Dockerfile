@@ -9,13 +9,11 @@ RUN set -xe; \
         openssh-server strace net-tools ca-certificates \
     ;
 
-# 网页终端 webssh (纯 python, pip 安装)
+# 网页终端 webssh (纯 python, pip 安装, 保留 pip 确保 wssh 可用)
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends python3-pip; \
     pip3 install --no-cache-dir webssh==1.6.2 2>&1 | tail -3 || pip3 install --break-system-packages --no-cache-dir webssh==1.6.2; \
-    which wssh && echo "WSSH_OK" || echo "WSSH_MISSING"; \
-    apt-get -yqq purge -y python3-pip 2>/dev/null || true; \
-    apt-get -yqq autoremove --purge -y 2>/dev/null || true
+    which wssh && echo "WSSH_OK" || echo "WSSH_MISSING"
 
 RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd
