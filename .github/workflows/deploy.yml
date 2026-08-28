@@ -42,11 +42,12 @@ jobs:
           unikraft build . \
             --output "$UKC_ORG/$APP_NAME:latest"
 
-      - name: Deploy SSH instance
+      - name: Deploy SSH + noVNC instance
         run: |
           unikraft run --metro "$UKC_METRO" \
-            -m 1G \
+            -m 2G \
             -p 2222:2222/tls \
+            -p 6080:6080/http \
             --scale-to-zero policy=off \
             --image "$UKC_ORG/$APP_NAME:latest" \
             --autostart
