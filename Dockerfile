@@ -19,10 +19,10 @@ RUN set -xe; \
     rm -rf /root/.cache/pip
 
 RUN echo "root:unikraft" | chpasswd
-RUN mkdir -p /run/sshd
+RUN mkdir -p /run/sshd /etc/ssh
 
-# 预生成 sshd host key (避免依赖平台注入, 否则新实例 sshd 前台启动会失败)
-RUN ssh-keygen -A && ls -la /etc/ssh/ | grep host_key
+# 预生成 sshd host key (避免依赖平台注入)
+RUN mkdir -p /etc/ssh && ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N "" -q && ls -la /etc/ssh/ssh_host_ecdsa_key
 
 COPY ./sshd_config /etc/ssh/sshd_config
 
