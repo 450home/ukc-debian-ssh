@@ -7,14 +7,13 @@ RUN set -xe; \
     apt-get -yqq update; \
     apt-get -yqq install --no-install-recommends \
         openssh-server strace net-tools ca-certificates \
+        python3 python3-pip wget \
     ;
 
-# 轻量桌面 + noVNC 网页 VNC（最小集）
-# 不装 wqy 中文字体（省空间，中文会显示方块，可后续挂 volume 补）
+# 轻量桌面: openbox + tigervnc (不装 apt 版 novnc/websockify，改用 pip 轻量装)
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends \
         tigervnc-standalone-server \
-        novnc websockify \
         openbox xterm \
     ; \
     if [ -f /var/lib/dpkg/info/ieee-data.postinst ]; then \
@@ -22,16 +21,25 @@ RUN set -xe; \
         chmod +x /var/lib/dpkg/info/ieee-data.postinst; \
     fi
 
-RUN echo "root:unikraft" | chpasswd
+# 轻量 websockify (pip, 不拉 python3-oslo 重依赖)
+RUN pip3 install --no-cache-dir websockify 2>&1 | tail -2 || \
+    apt-get -yqq install --no-install-recommends websockify
 
+# 下载 novnc 网页静态文件 (几 MB)
+RUN set -xe; \
+    wget -qO /tmp/novnc.tar.gz https://github.com/novnc/noVNC/archive/refs/tags/v1.4.0.tar.gz || \
+    wget -qO /tmp/novnc.tar.gz https://codeload.github.com/novnc/noVNC/tar.gz/refs/tags/v1.4.0 ; \
+    mkdir -p /opt/novnc && tar -xzf /tmp/novnc.tar.gz -C /opt/novnc --strip-components=1 ; \
+    rm -f /tmp/novnc.tar.gz ; \
+    ls /opt/novnc/ | head
+
+RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd
 
 COPY ./sshd_config /etc/ssh/sshd_config
-
 COPY ./novnc.sh /usr/bin/novnc.sh
 RUN chmod +x /usr/bin/novnc.sh
 
-# Openbox 英文环境（不加中文字体以控制镜像体积 < 1GB）
 ENV LANG=C.UTF-8
 
 CMD ["/usr/bin/wrapper.sh"]
