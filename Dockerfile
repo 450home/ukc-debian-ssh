@@ -9,15 +9,14 @@ RUN set -xe; \
         openssh-server strace net-tools ca-certificates \
     ;
 
-# 网页终端 ttyd (单二进制, 零 X11 依赖, 体积 < 10MB)
+# 下载 ttyd 静态二进制 (官方 release, musl 静态链接, ~3MB, 零依赖)
 RUN set -xe; \
-    apt-get -yqq install --no-install-recommends \
-        ttyd \
-    ; \
-    if [ -f /var/lib/dpkg/info/ieee-data.postinst ]; then \
-        printf '#!/bin/sh\nexit 0\n' > /var/lib/dpkg/info/ieee-data.postinst; \
-        chmod +x /var/lib/dpkg/info/ieee-data.postinst; \
-    fi
+    apt-get -yqq install --no-install-recommends wget ca-certificates; \
+    wget -qO /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.4/ttyd.x86_64 \
+    || wget -qO /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64; \
+    chmod +x /usr/bin/ttyd; \
+    apt-get -yqq purge -y wget; \
+    apt-get -yqq autoremove --purge -y
 
 RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd
