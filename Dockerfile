@@ -9,14 +9,12 @@ RUN set -xe; \
         openssh-server strace net-tools ca-certificates \
     ;
 
-# 下载 ttyd 静态二进制 (官方 release, musl 静态链接, ~3MB, 零依赖)
+# 网页终端 webssh (纯 python, pip 安装, 零二进制依赖, 兼容 glibc)
 RUN set -xe; \
-    apt-get -yqq install --no-install-recommends wget ca-certificates; \
-    wget -qO /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.4/ttyd.x86_64 \
-    || wget -qO /usr/bin/ttyd https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64; \
-    chmod +x /usr/bin/ttyd; \
-    apt-get -yqq purge -y wget; \
-    apt-get -yqq autoremove --purge -y
+    apt-get -yqq install --no-install-recommends python3-pip; \
+    pip3 install --no-cache-dir webssh 2>&1 | tail -2 || pip3 install --break-system-packages --no-cache-dir webssh; \
+    apt-get -yqq purge -y python3-pip 2>/dev/null || true; \
+    apt-get -yqq autoremove --purge -y 2>/dev/null || true
 
 RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd
