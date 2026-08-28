@@ -10,18 +10,18 @@ RUN set -xe; \
         python3 \
     ;
 
-# 轻量桌面: twm(极小窗口管理器, X11自带) + tigervnc
+# 超精简: 只装 tigervnc + xterm (无窗口管理器, 无 novnc 静态文件)
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends \
         tigervnc-standalone-server \
-        twm xterm \
+        xterm \
     ; \
     if [ -f /var/lib/dpkg/info/ieee-data.postinst ]; then \
         printf '#!/bin/sh\nexit 0\n' > /var/lib/dpkg/info/ieee-data.postinst; \
         chmod +x /var/lib/dpkg/info/ieee-data.postinst; \
     fi
 
-# novnc 网页静态文件 (直接下载 release 静态资源, 不拉 git/node 依赖)
+# novnc 网页静态文件 (只下载核心 vnc.html + 资源, 不拉 node/git 依赖)
 RUN set -xe; \
     apt-get -yqq install --no-install-recommends wget; \
     wget -qO /tmp/novnc.tar.gz https://github.com/novnc/noVNC/archive/refs/tags/v1.4.0.tar.gz; \
