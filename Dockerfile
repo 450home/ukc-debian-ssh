@@ -9,14 +9,8 @@ RUN set -xe; \
         openssh-server strace net-tools ca-certificates \
     ;
 
-# 网页终端 webssh (纯 python, pip 强制安装后清理 pip 节省空间)
-RUN set -xe; \
-    apt-get -yqq install --no-install-recommends python3-pip; \
-    pip3 install --break-system-packages --no-cache-dir webssh==1.6.2 2>&1 | tail -3; \
-    ls -la /usr/local/bin/wssh 2>&1 || true; \
-    apt-get -yqq purge -y python3-pip; \
-    apt-get -yqq autoremove --purge -y; \
-    rm -rf /root/.cache/pip
+# [临时测试] 不装 webssh
+RUN echo "skip webssh for test"
 
 RUN echo "root:unikraft" | chpasswd
 RUN mkdir -p /run/sshd /etc/ssh
