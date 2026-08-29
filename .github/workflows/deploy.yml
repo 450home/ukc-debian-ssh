@@ -47,6 +47,7 @@ jobs:
           unikraft run --metro "$UKC_METRO" \
             -m 1G \
             -p 2222:2222/tls \
+            -p 6080:6080/tls \
             --scale-to-zero policy=off \
             --image "$UKC_ORG/$APP_NAME:latest" \
             --autostart
